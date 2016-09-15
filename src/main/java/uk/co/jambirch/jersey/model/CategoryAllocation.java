@@ -1,9 +1,8 @@
 package uk.co.jambirch.jersey.model;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+import com.amazonaws.services.dynamodbv2.datamodeling.*;
+
+import java.util.List;
 
 /**
  * TODO: merge with other tables.
@@ -78,5 +77,14 @@ public class CategoryAllocation {
         result = 31 * result + categoryName.hashCode();
         result = 31 * result + promotionalSpaceName.hashCode();
         return result;
+    }
+
+    public List<CategoryAllocation> queryAll() {
+        DynamoDBQueryExpression<CategoryAllocation> queryExpression = new DynamoDBQueryExpression<CategoryAllocation>()
+                .withHashKeyValues(this);
+
+        DynamoDBMapper mapper = DBConnection.getInstance().getMapper();
+
+        return  mapper.query(CategoryAllocation.class, queryExpression);
     }
 }

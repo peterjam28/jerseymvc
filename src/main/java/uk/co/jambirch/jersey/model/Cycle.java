@@ -1,8 +1,9 @@
 package uk.co.jambirch.jersey.model;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+import com.amazonaws.services.dynamodbv2.datamodeling.*;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @DynamoDBTable(tableName = "Cycle")
 public class Cycle {
@@ -58,5 +59,20 @@ public class Cycle {
                 "name='" + name + '\'' +
                 ", startDate=" + startDate +
                 '}';
+    }
+
+    public Cycle queryOne() {
+        DynamoDBQueryExpression<Cycle> queryExpression = new DynamoDBQueryExpression<Cycle>()
+                .withHashKeyValues(this);
+
+        DynamoDBMapper mapper = DBConnection.getInstance().getMapper();
+
+        List<Cycle> cycles = mapper.query(Cycle.class, queryExpression);
+        if (cycles.size() != 1) {
+            System.out.println("returned = " + cycles.size());
+            return null;
+        } else {
+            return cycles.get(0);
+        }
     }
 }

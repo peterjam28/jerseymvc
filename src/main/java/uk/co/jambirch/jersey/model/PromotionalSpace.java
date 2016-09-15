@@ -1,7 +1,11 @@
 package uk.co.jambirch.jersey.model;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+
+import java.util.List;
 
 /**
  * Created by peter.jamieson on 14/09/2016.
@@ -39,5 +43,20 @@ public class PromotionalSpace {
     @Override
     public int hashCode() {
         return name.hashCode();
+    }
+
+    public PromotionalSpace queryOne() {
+        DynamoDBQueryExpression<PromotionalSpace> queryExpression = new DynamoDBQueryExpression<PromotionalSpace>()
+                .withHashKeyValues(this);
+
+        DynamoDBMapper mapper = DBConnection.getInstance().getMapper();
+
+        List<PromotionalSpace> cycles = mapper.query(PromotionalSpace.class, queryExpression);
+        if (cycles.size() != 1) {
+            System.out.println("returned = " + cycles.size());
+            return null;
+        } else {
+            return cycles.get(0);
+        }
     }
 }
